@@ -13,161 +13,173 @@ import {
 } from 'recharts';
 import { valeurProjetee } from '../lib/calculations';
 import { formatCurrency } from '../lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 interface ChartsDisplayProps {
-  prixInitial: number;
-  croissanceBase: number;
-  croissanceOptimiste: number;
+  initialPrice: number;
+  baseGrowth: number;
+  optimisticGrowth: number;
 }
 
 const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
-  prixInitial,
-  croissanceBase,
-  croissanceOptimiste
+  initialPrice,
+  baseGrowth,
+  optimisticGrowth
 }) => {
-  // Génération des données pour le graphique de projections
-  const annees = Array.from({ length: 11 }, (_, i) => i);
-  const donneesProjections = annees.map(annee => ({
-    annee,
-    base: valeurProjetee(prixInitial, croissanceBase, annee),
-    optimiste: valeurProjetee(prixInitial, croissanceOptimiste, annee)
+  // Generate data for projections chart
+  const years = Array.from({ length: 11 }, (_, i) => i);
+  const projectionsData = years.map(year => ({
+    year,
+    base: valeurProjetee(initialPrice, baseGrowth, year),
+    optimistic: valeurProjetee(initialPrice, optimisticGrowth, year)
   }));
 
-  // Données pour le graphique de comparaison des scénarios à 5 et 10 ans
-  const donneesComparaison = [
+  // Data for comparison chart at 5 and 10 years
+  const comparisonData = [
     {
-      periode: '5 ans',
-      base: valeurProjetee(prixInitial, croissanceBase, 5),
-      optimiste: valeurProjetee(prixInitial, croissanceOptimiste, 5)
+      period: '5 years',
+      base: valeurProjetee(initialPrice, baseGrowth, 5),
+      optimistic: valeurProjetee(initialPrice, optimisticGrowth, 5)
     },
     {
-      periode: '10 ans',
-      base: valeurProjetee(prixInitial, croissanceBase, 10),
-      optimiste: valeurProjetee(prixInitial, croissanceOptimiste, 10)
+      period: '10 years',
+      base: valeurProjetee(initialPrice, baseGrowth, 10),
+      optimistic: valeurProjetee(initialPrice, optimisticGrowth, 10)
     }
   ];
 
   const formatTooltipValue = (value: number) => [formatCurrency(value), ''];
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-900">
-          Projections de valeur immobilière
-        </h2>
-        
-        {/* Graphique de projections sur 10 ans */}
-        <div className="mb-8">
-          <h3 className="text-lg font-medium mb-4 text-gray-800">
-            Évolution de la valeur sur 10 ans
-          </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={donneesProjections}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="annee" 
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis 
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}k€`}
-                />
-                <Tooltip 
-                  formatter={formatTooltipValue}
-                  labelFormatter={(label) => `Année ${label}`}
-                  contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="base"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  name={`Scénario Base (${(croissanceBase * 100).toFixed(1)}%/an)`}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="optimiste"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  name={`Scénario Optimiste (${(croissanceOptimiste * 100).toFixed(1)}%/an)`}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Property Value Projections
+          </h1>
+          <p className="text-muted-foreground">
+            Investment analysis charts for Bruz property
+          </p>
         </div>
 
-        {/* Graphique de comparaison à 5 et 10 ans */}
-        <div>
-          <h3 className="text-lg font-medium mb-4 text-gray-800">
-            Comparaison des scénarios à 5 et 10 ans
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={donneesComparaison}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="periode"
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis 
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}k€`}
-                />
-                <Tooltip 
-                  formatter={formatTooltipValue}
-                  contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-                <Legend />
-                <Bar 
-                  dataKey="base" 
-                  fill="#3b82f6" 
-                  name={`Scénario Base (${(croissanceBase * 100).toFixed(1)}%/an)`}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar 
-                  dataKey="optimiste" 
-                  fill="#10b981" 
-                  name={`Scénario Optimiste (${(croissanceOptimiste * 100).toFixed(1)}%/an)`}
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        <div className="space-y-8">
+          {/* 10-year projections chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Value Evolution Over 10 Years</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={projectionsData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="year" 
+                      className="text-muted-foreground"
+                    />
+                    <YAxis 
+                      className="text-muted-foreground"
+                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k€`}
+                    />
+                    <Tooltip 
+                      formatter={formatTooltipValue}
+                      labelFormatter={(label) => `Year ${label}`}
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        color: 'hsl(var(--card-foreground))'
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="base"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={3}
+                      dot={{ r: 5, fill: "hsl(var(--primary))" }}
+                      name={`Base Scenario (${(baseGrowth * 100).toFixed(1)}%/year)`}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="optimistic"
+                      stroke="#10b981"
+                      strokeWidth={3}
+                      dot={{ r: 5, fill: "#10b981" }}
+                      name={`Optimistic Scenario (${(optimisticGrowth * 100).toFixed(1)}%/year)`}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Résumé des données */}
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-semibold text-gray-900 mb-3">Résumé des projections</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-gray-600">Valeur initiale:</p>
-              <p className="font-semibold">{formatCurrency(prixInitial)}</p>
-            </div>
-            <div>
-              <p className="text-gray-600">Plus-value potentielle (10 ans, scénario optimiste):</p>
-              <p className="font-semibold text-green-600">
-                {formatCurrency(valeurProjetee(prixInitial, croissanceOptimiste, 10) - prixInitial)}
-              </p>
-            </div>
-          </div>
+          {/* Comparison chart at 5 and 10 years */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Scenario Comparison at 5 and 10 Years</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={comparisonData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="period"
+                      className="text-muted-foreground"
+                    />
+                    <YAxis 
+                      className="text-muted-foreground"
+                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k€`}
+                    />
+                    <Tooltip 
+                      formatter={formatTooltipValue}
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        color: 'hsl(var(--card-foreground))'
+                      }}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="base" 
+                      fill="hsl(var(--primary))" 
+                      name={`Base Scenario (${(baseGrowth * 100).toFixed(1)}%/year)`}
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="optimistic" 
+                      fill="#10b981" 
+                      name={`Optimistic Scenario (${(optimisticGrowth * 100).toFixed(1)}%/year)`}
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Projection Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <p className="text-muted-foreground">Initial Value:</p>
+                  <p className="text-2xl font-bold">{formatCurrency(initialPrice)}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground">Potential Gain (10 years, optimistic):</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {formatCurrency(valeurProjetee(initialPrice, optimisticGrowth, 10) - initialPrice)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
