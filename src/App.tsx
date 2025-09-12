@@ -1,7 +1,7 @@
-import ModernApp from './components/ModernApp';
+import SimpleApp from './components/SimpleApp';
 
 function App() {
-  return <ModernApp />;
+  return <SimpleApp />;
 }
 
 export default App;
