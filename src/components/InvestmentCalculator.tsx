@@ -61,7 +61,9 @@ const InvestmentCalculator: React.FC = () => {
     const monthlyPI = mensualite(loanAmount, parameters.interestRate, parameters.loanYears);
     const monthlyInsurance = loanAmount * parameters.insuranceRate / 12;
     const totalMonthly = monthlyPI + monthlyInsurance;
-    const dti = totalMonthly / parameters.netIncome;
+    
+    // Add validation to prevent division by zero
+    const dti = parameters.netIncome > 0 ? totalMonthly / parameters.netIncome : 0;
     
     const grossAnnualRent = parameters.area * parameters.rentPerSqm * 12 * (1 - parameters.vacancyPercent);
     const netAnnualRent = grossAnnualRent * (1 - parameters.chargesPercent);
@@ -73,6 +75,7 @@ const InvestmentCalculator: React.FC = () => {
     
     const rentalCashflow = netAnnualRent - (totalMonthly * 12);
     
+    // Pass inflation parameter to fix IRR calculation
     const { triNominal, triReel } = calculTRI10Ans(
       loanAmount,
       netAnnualRent,
@@ -82,7 +85,8 @@ const InvestmentCalculator: React.FC = () => {
       parameters.interestRate,
       parameters.loanYears,
       monthlyInsurance,
-      parameters.price
+      parameters.price,
+      parameters.inflation
     );
     
     const hcsfCompliance = verificationHCSF(dti);

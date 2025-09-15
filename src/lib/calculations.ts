@@ -82,7 +82,8 @@ export function calculTRI10Ans(
   tauxPret: number,
   anneesPret: number,
   assuranceMensuelle: number,
-  prixAchat: number
+  prixAchat: number,
+  inflation: number = 0.02
 ): { triNominal: number | null; triReel: number | null } {
   const serviceDetteAnnuel = (mensualite(pret, tauxPret, anneesPret) + assuranceMensuelle) * 12;
   const solde120Mois = soldeRestantDu(pret, tauxPret, anneesPret, 120);
@@ -90,17 +91,17 @@ export function calculTRI10Ans(
   const venteNette = prixVente * (1 - coutVente);
   const cashFinalNet = venteNette - solde120Mois;
 
-  // Flux de trésorerie: investissement initial négatif, puis 5 années négatives (pas de revenus locatifs),
-  // puis 4 années avec NOI, puis dernière année avec NOI + vente
+  // Flux de trésorerie réalistes: investissement initial négatif, puis 9 années avec NOI - dette,
+  // puis dernière année avec NOI - dette + vente nette
+  const cashflowAnnuel = noi - serviceDetteAnnuel;
   const fluxTresorerie = [
     -apportInitial,
-    ...Array(5).fill(-serviceDetteAnnuel),
-    ...Array(4).fill(-serviceDetteAnnuel + noi),
-    -serviceDetteAnnuel + noi + cashFinalNet
+    ...Array(9).fill(cashflowAnnuel),
+    cashflowAnnuel + cashFinalNet
   ];
 
   const triNom = calculTRIBissection(fluxTresorerie);
-  const triReelCalc = triNom !== null ? triReel(triNom, 0.02) : null; // inflation 2%
+  const triReelCalc = triNom !== null ? triReel(triNom, inflation) : null;
 
   return {
     triNominal: triNom,
