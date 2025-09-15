@@ -33,7 +33,8 @@ const DownloadSection: React.FC = () => {
 
   const handleDownload = (fileName: string) => {
     const link = document.createElement('a');
-    link.href = `./${fileName}`;
+    // Use Vite's BASE_URL for proper environment compatibility
+    link.href = `${import.meta.env.BASE_URL}${fileName}`;
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
