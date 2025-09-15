@@ -59,52 +59,52 @@ const InvestmentCalculator: React.FC = () => {
   const validateParameters = () => {
     const errors: Record<string, string> = {};
     
-    // Check for NaN/invalid numbers first
-    if (!Number.isFinite(parameters.price)) errors.price = "Invalid number";
-    else if (parameters.price <= 0) errors.price = "Price must be greater than 0";
+    // Vérification des nombres invalides d'abord
+    if (!Number.isFinite(parameters.price)) errors.price = "Nombre invalide";
+    else if (parameters.price <= 0) errors.price = "Le prix doit être supérieur à 0";
     
-    if (!Number.isFinite(parameters.area)) errors.area = "Invalid number";
-    else if (parameters.area <= 0) errors.area = "Area must be greater than 0";
+    if (!Number.isFinite(parameters.area)) errors.area = "Nombre invalide";
+    else if (parameters.area <= 0) errors.area = "La surface doit être supérieure à 0";
     
-    if (!Number.isFinite(parameters.downPayment)) errors.downPayment = "Invalid number";
-    else if (parameters.downPayment < 0) errors.downPayment = "Down payment cannot be negative";
+    if (!Number.isFinite(parameters.downPayment)) errors.downPayment = "Nombre invalide";
+    else if (parameters.downPayment < 0) errors.downPayment = "L'apport ne peut pas être négatif";
     
-    if (!Number.isFinite(parameters.feesPercent)) errors.feesPercent = "Invalid number";
-    else if (parameters.feesPercent < 0 || parameters.feesPercent > 1) errors.feesPercent = "Acquisition fees must be between 0% and 100%";
+    if (!Number.isFinite(parameters.feesPercent)) errors.feesPercent = "Nombre invalide";
+    else if (parameters.feesPercent < 0 || parameters.feesPercent > 1) errors.feesPercent = "Les frais d'acquisition doivent être entre 0% et 100%";
     
     // Calculate fees to validate against total cost (only if values are valid)
     if (Number.isFinite(parameters.price) && Number.isFinite(parameters.feesPercent) && Number.isFinite(parameters.downPayment)) {
       const fees = parameters.price * parameters.feesPercent;
       const totalCost = parameters.price + fees;
-      if (parameters.downPayment >= totalCost) errors.downPayment = "Down payment cannot exceed property price plus fees";
+      if (parameters.downPayment >= totalCost) errors.downPayment = "L'apport ne peut pas dépasser le prix du bien plus les frais";
     }
     
-    if (!Number.isFinite(parameters.netIncome)) errors.netIncome = "Invalid number";
-    else if (parameters.netIncome <= 0) errors.netIncome = "Net income must be greater than 0";
+    if (!Number.isFinite(parameters.netIncome)) errors.netIncome = "Nombre invalide";
+    else if (parameters.netIncome <= 0) errors.netIncome = "Le revenu net doit être supérieur à 0";
     
-    if (!Number.isFinite(parameters.interestRate)) errors.interestRate = "Invalid number";
-    else if (parameters.interestRate < 0 || parameters.interestRate > 0.2) errors.interestRate = "Interest rate must be between 0% and 20%";
+    if (!Number.isFinite(parameters.interestRate)) errors.interestRate = "Nombre invalide";
+    else if (parameters.interestRate < 0 || parameters.interestRate > 0.2) errors.interestRate = "Le taux d'intérêt doit être entre 0% et 20%";
     
-    if (!Number.isFinite(parameters.loanYears)) errors.loanYears = "Invalid number";
-    else if (parameters.loanYears <= 0 || parameters.loanYears > 50) errors.loanYears = "Loan duration must be between 1 and 50 years";
+    if (!Number.isFinite(parameters.loanYears)) errors.loanYears = "Nombre invalide";
+    else if (parameters.loanYears <= 0 || parameters.loanYears > 50) errors.loanYears = "La durée du prêt doit être entre 1 et 50 ans";
     
-    if (!Number.isFinite(parameters.insuranceRate)) errors.insuranceRate = "Invalid number";
-    else if (parameters.insuranceRate < 0 || parameters.insuranceRate > 0.1) errors.insuranceRate = "Insurance rate must be between 0% and 10%";
+    if (!Number.isFinite(parameters.insuranceRate)) errors.insuranceRate = "Nombre invalide";
+    else if (parameters.insuranceRate < 0 || parameters.insuranceRate > 0.1) errors.insuranceRate = "Le taux d'assurance doit être entre 0% et 10%";
     
-    if (!Number.isFinite(parameters.rentPerSqm)) errors.rentPerSqm = "Invalid number";
-    else if (parameters.rentPerSqm <= 0) errors.rentPerSqm = "Rent per m² must be greater than 0";
+    if (!Number.isFinite(parameters.rentPerSqm)) errors.rentPerSqm = "Nombre invalide";
+    else if (parameters.rentPerSqm <= 0) errors.rentPerSqm = "Le loyer au m² doit être supérieur à 0";
     
-    if (!Number.isFinite(parameters.chargesPercent)) errors.chargesPercent = "Invalid number";
-    else if (parameters.chargesPercent < 0 || parameters.chargesPercent > 1) errors.chargesPercent = "Charges must be between 0% and 100%";
+    if (!Number.isFinite(parameters.chargesPercent)) errors.chargesPercent = "Nombre invalide";
+    else if (parameters.chargesPercent < 0 || parameters.chargesPercent > 1) errors.chargesPercent = "Les charges doivent être entre 0% et 100%";
     
-    if (!Number.isFinite(parameters.vacancyPercent)) errors.vacancyPercent = "Invalid number";
-    else if (parameters.vacancyPercent < 0 || parameters.vacancyPercent > 1) errors.vacancyPercent = "Vacancy rate must be between 0% and 100%";
+    if (!Number.isFinite(parameters.vacancyPercent)) errors.vacancyPercent = "Nombre invalide";
+    else if (parameters.vacancyPercent < 0 || parameters.vacancyPercent > 1) errors.vacancyPercent = "Le taux de vacance doit être entre 0% et 100%";
     
-    if (!Number.isFinite(parameters.baseGrowth)) errors.baseGrowth = "Invalid number";
-    else if (parameters.baseGrowth < -0.05 || parameters.baseGrowth > 0.2) errors.baseGrowth = "Base growth must be between -5% and 20%";
+    if (!Number.isFinite(parameters.baseGrowth)) errors.baseGrowth = "Nombre invalide";
+    else if (parameters.baseGrowth < -0.05 || parameters.baseGrowth > 0.2) errors.baseGrowth = "La croissance de base doit être entre -5% et 20%";
     
-    if (!Number.isFinite(parameters.optimisticGrowth)) errors.optimisticGrowth = "Invalid number";
-    else if (parameters.optimisticGrowth < -0.05 || parameters.optimisticGrowth > 0.2) errors.optimisticGrowth = "Optimistic growth must be between -5% and 20%";
+    if (!Number.isFinite(parameters.optimisticGrowth)) errors.optimisticGrowth = "Nombre invalide";
+    else if (parameters.optimisticGrowth < -0.05 || parameters.optimisticGrowth > 0.2) errors.optimisticGrowth = "La croissance optimiste doit être entre -5% et 20%";
     
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -232,15 +232,15 @@ const InvestmentCalculator: React.FC = () => {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="parameters" className="flex items-center gap-2">
               <Home className="h-4 w-4" />
-              Parameters
+              Paramètres
             </TabsTrigger>
             <TabsTrigger value="results" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Results
+              Résultats
             </TabsTrigger>
             <TabsTrigger value="scenarios" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Scenarios
+              Scénarios
             </TabsTrigger>
           </TabsList>
 
@@ -251,45 +251,45 @@ const InvestmentCalculator: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Home className="h-5 w-5 text-primary" />
-                    Property Details
+                    Détails du Bien
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <InputWithUnit
-                    label="Property Price"
+                    label="Prix du Bien"
                     unit="€"
                     type="number"
                     value={parameters.price}
                     onChange={(e) => handleInputChange('price', Number(e.target.value))}
-                    helperText="Total purchase price for the 57m² apartment"
+                    helperText="Prix d'achat total pour l'appartement de 57m²"
                     error={validationErrors.price}
                   />
                   <InputWithUnit
-                    label="Area"
+                    label="Surface"
                     unit="m²"
                     type="number"
                     value={parameters.area}
                     onChange={(e) => handleInputChange('area', Number(e.target.value))}
-                    helperText="Living area of the property"
+                    helperText="Surface habitable du bien"
                     error={validationErrors.area}
                   />
                   <InputWithUnit
-                    label="Down Payment"
+                    label="Apport Personnel"
                     unit="€"
                     type="number"
                     value={parameters.downPayment}
                     onChange={(e) => handleInputChange('downPayment', Number(e.target.value))}
-                    helperText="Initial cash payment (applied to total cost including fees)"
+                    helperText="Apport initial en espèces (appliqué au coût total frais inclus)"
                     error={validationErrors.downPayment}
                   />
                   <InputWithUnit
-                    label="Acquisition Fees"
+                    label="Frais d'Acquisition"
                     unit="%"
                     type="number"
                     step="0.01"
                     value={parameters.feesPercent * 100}
                     onChange={(e) => handleInputChange('feesPercent', Number(e.target.value) / 100)}
-                    helperText="Notary, registration, and agency fees"
+                    helperText="Frais de notaire, d'enregistrement et d'agence"
                     error={validationErrors.feesPercent}
                   />
                 </CardContent>
@@ -300,46 +300,46 @@ const InvestmentCalculator: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-green-600" />
-                    Financing
+                    Financement
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <InputWithUnit
-                    label="Monthly Net Income"
+                    label="Revenus Nets Mensuels"
                     unit="€"
                     type="number"
                     value={parameters.netIncome}
                     onChange={(e) => handleInputChange('netIncome', Number(e.target.value))}
-                    helperText="Your monthly take-home salary"
+                    helperText="Votre salaire net mensuel"
                     error={validationErrors.netIncome}
                   />
                   <InputWithUnit
-                    label="Interest Rate"
+                    label="Taux d'Intérêt"
                     unit="%"
                     type="number"
                     step="0.01"
                     value={parameters.interestRate * 100}
                     onChange={(e) => handleInputChange('interestRate', Number(e.target.value) / 100)}
-                    helperText="Annual mortgage interest rate"
+                    helperText="Taux d'intérêt annuel du prêt immobilier"
                     error={validationErrors.interestRate}
                   />
                   <InputWithUnit
-                    label="Loan Duration"
+                    label="Durée du Prêt"
                     unit="years"
                     type="number"
                     value={parameters.loanYears}
                     onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
-                    helperText="Mortgage repayment period"
+                    helperText="Période de remboursement du prêt"
                     error={validationErrors.loanYears}
                   />
                   <InputWithUnit
-                    label="Insurance Rate"
+                    label="Taux d'Assurance"
                     unit="%"
                     type="number"
                     step="0.01"
                     value={parameters.insuranceRate * 100}
                     onChange={(e) => handleInputChange('insuranceRate', Number(e.target.value) / 100)}
-                    helperText="Annual loan insurance premium"
+                    helperText="Prime d'assurance emprunteur annuelle"
                     error={validationErrors.insuranceRate}
                   />
                 </CardContent>
@@ -355,12 +355,12 @@ const InvestmentCalculator: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <InputWithUnit
-                    label="Rent per m²"
+                    label="Loyer au m²"
                     unit="€/m²/month"
                     type="number"
                     value={parameters.rentPerSqm}
                     onChange={(e) => handleInputChange('rentPerSqm', Number(e.target.value))}
-                    helperText="Monthly rent per square meter"
+                    helperText="Loyer mensuel par mètre carré"
                     error={validationErrors.rentPerSqm}
                   />
                   <InputWithUnit
@@ -370,17 +370,17 @@ const InvestmentCalculator: React.FC = () => {
                     step="0.01"
                     value={parameters.chargesPercent * 100}
                     onChange={(e) => handleInputChange('chargesPercent', Number(e.target.value) / 100)}
-                    helperText="Property management and maintenance costs"
+                    helperText="Coûts de gestion et d'entretien du bien"
                     error={validationErrors.chargesPercent}
                   />
                   <InputWithUnit
-                    label="Vacancy Rate"
+                    label="Taux de Vacance"
                     unit="%"
                     type="number"
                     step="0.01"
                     value={parameters.vacancyPercent * 100}
                     onChange={(e) => handleInputChange('vacancyPercent', Number(e.target.value) / 100)}
-                    helperText="Expected periods without tenants"
+                    helperText="Périodes prévues sans locataires"
                     error={validationErrors.vacancyPercent}
                   />
                   
@@ -393,7 +393,7 @@ const InvestmentCalculator: React.FC = () => {
                     disabled={Object.keys(validationErrors).length > 0}
                   >
                     <Calculator className="h-4 w-4 mr-2" />
-                    Recalculate Investment
+                    Recalculer l'Investissement
                   </Button>
                 </CardContent>
               </Card>
@@ -406,28 +406,28 @@ const InvestmentCalculator: React.FC = () => {
                 {/* Financing Results */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Financing</CardTitle>
+                    <CardTitle>Financement</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Loan Amount</span>
+                        <span className="text-muted-foreground">Montant du Prêt</span>
                         <span className="font-semibold">{formatCurrency(results.montantPret)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Monthly P&I</span>
+                        <span className="text-muted-foreground">Mensualité C&I</span>
                         <span className="font-semibold">{formatCurrency(results.mensualitePI)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Insurance</span>
+                        <span className="text-muted-foreground">Assurance</span>
                         <span className="font-semibold">{formatCurrency(results.assuranceMensuelle)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Total Monthly</span>
+                        <span className="text-muted-foreground">Total Mensuel</span>
                         <span className="font-bold text-lg">{formatCurrency(results.mensualiteTotal)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-muted-foreground">Debt-to-Income</span>
+                        <span className="text-muted-foreground">Taux d'Endettement</span>
                         <span className={`font-bold text-lg ${
                           results.dti > 0.35 ? 'text-destructive' : 'text-green-600'
                         }`}>
@@ -441,24 +441,24 @@ const InvestmentCalculator: React.FC = () => {
                 {/* Value Projections */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Value Projections</CardTitle>
+                    <CardTitle>Projections de Valeur</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Current Value</span>
+                        <span className="text-muted-foreground">Valeur Actuelle</span>
                         <span className="font-semibold">{formatCurrency(parameters.price)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">5-Year Value</span>
+                        <span className="text-muted-foreground">Valeur 5 ans</span>
                         <span className="font-semibold text-primary">{formatCurrency(results.valeurProjectee5ans)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">10-Year Value</span>
+                        <span className="text-muted-foreground">Valeur 10 ans</span>
                         <span className="font-bold text-lg text-primary">{formatCurrency(results.valeurProjectee10ans)}</span>
                       </div>
                       <div className="pt-4 border-t text-center">
-                        <div className="text-sm text-muted-foreground">Projected Gain (10 years)</div>
+                        <div className="text-sm text-muted-foreground">Gain Projeté (10 ans)</div>
                         <div className="text-xl font-bold text-green-600">
                           +{formatCurrency(results.valeurProjectee10ans - parameters.price)}
                         </div>
@@ -470,16 +470,16 @@ const InvestmentCalculator: React.FC = () => {
                 {/* Profitability */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Profitability</CardTitle>
+                    <CardTitle>Rentabilité</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Annual Net Rent</span>
+                        <span className="text-muted-foreground">Loyer Net Annuel</span>
                         <span className="font-semibold">{formatCurrency(results.loyerAnnuelNet)}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Annual Cash Flow</span>
+                        <span className="text-muted-foreground">Cash Flow Annuel</span>
                         <span className={`font-semibold ${
                           results.cashflowLocatif < 0 ? 'text-destructive' : 'text-green-600'
                         }`}>
@@ -487,13 +487,13 @@ const InvestmentCalculator: React.FC = () => {
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
-                        <span className="text-muted-foreground">Nominal IRR (10y)</span>
+                        <span className="text-muted-foreground">TRI Nominal (10 ans)</span>
                         <span className="font-semibold">
                           {results.triNominal ? formatPercentage(results.triNominal) : 'N/A'}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-muted-foreground">Real IRR (2% inflation)</span>
+                        <span className="text-muted-foreground">TRI Réel (inflation 2%)</span>
                         <span className="font-bold text-lg">
                           {results.triReel ? formatPercentage(results.triReel) : 'N/A'}
                         </span>
@@ -508,7 +508,7 @@ const InvestmentCalculator: React.FC = () => {
           <TabsContent value="scenarios" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Growth Scenarios</CardTitle>
+                <CardTitle>Scénarios de Croissance</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -517,36 +517,36 @@ const InvestmentCalculator: React.FC = () => {
                     onClick={() => setScenario('base')}
                     className="w-full"
                   >
-                    Base Scenario ({formatPercentage(parameters.baseGrowth)}/year)
+                    Scénario de Base ({formatPercentage(parameters.baseGrowth)}/an)
                   </Button>
                   <Button
                     variant={scenario === 'optimistic' ? 'default' : 'outline'}
                     onClick={() => setScenario('optimistic')}
                     className="w-full"
                   >
-                    Optimistic Scenario ({formatPercentage(parameters.optimisticGrowth)}/year)
+                    Scénario Optimiste ({formatPercentage(parameters.optimisticGrowth)}/an)
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <InputWithUnit
-                    label="Base Growth"
+                    label="Croissance de Base"
                     unit="%/year"
                     type="number"
                     step="0.01"
                     value={parameters.baseGrowth * 100}
                     onChange={(e) => handleInputChange('baseGrowth', Number(e.target.value) / 100)}
-                    helperText="Conservative property value growth"
+                    helperText="Croissance conservatrice de la valeur du bien"
                     error={validationErrors.baseGrowth}
                   />
                   <InputWithUnit
-                    label="Optimistic Growth"
+                    label="Croissance Optimiste"
                     unit="%/year"
                     type="number"
                     step="0.01"
                     value={parameters.optimisticGrowth * 100}
                     onChange={(e) => handleInputChange('optimisticGrowth', Number(e.target.value) / 100)}
-                    helperText="Optimistic property value growth"
+                    helperText="Croissance optimiste de la valeur du bien"
                     error={validationErrors.optimisticGrowth}
                   />
                 </div>

@@ -16,7 +16,7 @@ function App() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-3">
               <div className="text-xl font-bold text-foreground">
-                Bruz Investment Calculator
+                Calculateur d'Investissement Bruz
               </div>
             </div>
             
@@ -28,7 +28,7 @@ function App() {
                 className="flex items-center gap-2"
               >
                 <Calculator className="h-4 w-4" />
-                Calculator
+                Calculateur
               </Button>
               <Button
                 variant={activeTab === 'charts' ? 'default' : 'ghost'}
@@ -36,7 +36,7 @@ function App() {
                 className="flex items-center gap-2"
               >
                 <BarChart3 className="h-4 w-4" />
-                Charts
+                Graphiques
               </Button>
               <Button
                 variant={activeTab === 'downloads' ? 'default' : 'ghost'}
@@ -44,7 +44,7 @@ function App() {
                 className="flex items-center gap-2"
               >
                 <Download className="h-4 w-4" />
-                Downloads
+                Téléchargements
               </Button>
             </div>
 
@@ -55,9 +55,9 @@ function App() {
                 onChange={(e) => setActiveTab(e.target.value)}
                 className="border border-input rounded-md px-3 py-2 text-sm bg-background"
               >
-                <option value="calculator">🧮 Calculator</option>
-                <option value="charts">📊 Charts</option>
-                <option value="downloads">📥 Downloads</option>
+                <option value="calculator">🧮 Calculateur</option>
+                <option value="charts">📊 Graphiques</option>
+                <option value="downloads">📥 Téléchargements</option>
               </select>
             </div>
           </div>
@@ -82,13 +82,13 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-sm text-muted-foreground space-y-2">
             <p className="font-medium">
-              Real Estate Investment Simulator - Bruz (35)
+              Simulateur d'Investissement Immobilier - Bruz (35)
             </p>
             <p>
-              Report generated on 12/09/2025 - Data based on local market analysis
+              Rapport généré le 12/09/2025 - Données basées sur l'analyse du marché local
             </p>
             <p className="text-xs">
-              Application built with React, TypeScript and Tailwind CSS
+              Application développée avec React, TypeScript et Tailwind CSS
             </p>
           </div>
         </div>

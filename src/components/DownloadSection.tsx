@@ -6,24 +6,24 @@ import { Button } from './ui/button';
 const DownloadSection: React.FC = () => {
   const documents = [
     {
-      name: 'Analysis Report PDF',
-      description: 'Complete pedagogical report with local market analysis and recommendations',
+      name: 'Rapport d\'Analyse PDF',
+      description: 'Rapport pédagogique complet avec analyse du marché local et recommandations',
       fileName: 'bruz_invest_report.pdf',
       icon: FileText,
       type: 'PDF',
       color: 'text-red-600 bg-red-50 border-red-200'
     },
     {
-      name: 'Excel Calculator',
-      description: 'Interactive Excel file with all calculations and sensitivity analysis',
+      name: 'Calculateur Excel',
+      description: 'Fichier Excel interactif avec tous les calculs et analyse de sensibilité',
       fileName: 'bruz_calculator.xlsx',
       icon: FileSpreadsheet,
       type: 'Excel',
       color: 'text-green-600 bg-green-50 border-green-200'
     },
     {
-      name: 'Python Simulator',
-      description: 'Python script with all calculation logic for advanced customization',
+      name: 'Simulateur Python',
+      description: 'Script Python avec toute la logique de calcul pour personnalisation avancée',
       fileName: 'bruz_simulator.py',
       icon: Code,
       type: 'Python',
@@ -46,10 +46,10 @@ const DownloadSection: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-4">
-            Download Documents
+            Télécharger les Documents
           </h1>
           <p className="text-muted-foreground text-lg">
-            Access complete investment analysis documents
+            Accédez aux documents complets d'analyse d'investissement
           </p>
         </div>
         
@@ -82,7 +82,7 @@ const DownloadSection: React.FC = () => {
                       size="lg"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Download
+                      Télécharger
                     </Button>
                   </div>
                 </CardContent>
@@ -93,13 +93,13 @@ const DownloadSection: React.FC = () => {
         
         <Card className="bg-muted/50">
           <CardHeader>
-            <CardTitle>About These Documents</CardTitle>
+            <CardTitle>À Propos de Ces Documents</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed">
-              These documents were generated as part of the investment analysis for the Bruz (35) apartment. 
-              The PDF report contains a complete local market analysis, the Excel calculations allow parameter 
-              customization, and the Python script offers total flexibility for advanced analysis.
+              Ces documents ont été générés dans le cadre de l'analyse d'investissement pour l'appartement à Bruz (35). 
+              Le rapport PDF contient une analyse complète du marché local, les calculs Excel permettent la 
+              personnalisation des paramètres, et le script Python offre une flexibilité totale pour l'analyse avancée.
             </p>
           </CardContent>
         </Card>

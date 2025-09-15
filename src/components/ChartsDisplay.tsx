@@ -37,12 +37,12 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
   // Data for comparison chart at 5 and 10 years
   const comparisonData = [
     {
-      period: '5 years',
+      period: '5 ans',
       base: valeurProjetee(initialPrice, baseGrowth, 5),
       optimistic: valeurProjetee(initialPrice, optimisticGrowth, 5)
     },
     {
-      period: '10 years',
+      period: '10 ans',
       base: valeurProjetee(initialPrice, baseGrowth, 10),
       optimistic: valeurProjetee(initialPrice, optimisticGrowth, 10)
     }
@@ -66,7 +66,7 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
           {/* 10-year projections chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Value Evolution Over 10 Years</CardTitle>
+              <CardTitle>Évolution de la Valeur sur 10 ans</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-80">
@@ -83,7 +83,7 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
                     />
                     <Tooltip 
                       formatter={formatTooltipValue}
-                      labelFormatter={(label) => `Year ${label}`}
+                      labelFormatter={(label) => `Année ${label}`}
                       contentStyle={{
                         backgroundColor: 'hsl(var(--card))',
                         border: '1px solid hsl(var(--border))',
@@ -98,7 +98,7 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
                       stroke="hsl(var(--primary))"
                       strokeWidth={3}
                       dot={{ r: 5, fill: "hsl(var(--primary))" }}
-                      name={`Base Scenario (${(baseGrowth * 100).toFixed(1)}%/year)`}
+                      name={`Scénario de Base (${(baseGrowth * 100).toFixed(1)}%/an)`}
                     />
                     <Line
                       type="monotone"
@@ -106,7 +106,7 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
                       stroke="#10b981"
                       strokeWidth={3}
                       dot={{ r: 5, fill: "#10b981" }}
-                      name={`Optimistic Scenario (${(optimisticGrowth * 100).toFixed(1)}%/year)`}
+                      name={`Scénario Optimiste (${(optimisticGrowth * 100).toFixed(1)}%/an)`}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -117,7 +117,7 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
           {/* Comparison chart at 5 and 10 years */}
           <Card>
             <CardHeader>
-              <CardTitle>Scenario Comparison at 5 and 10 Years</CardTitle>
+              <CardTitle>Comparaison des Scénarios à 5 et 10 ans</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-64">
@@ -145,13 +145,13 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
                     <Bar 
                       dataKey="base" 
                       fill="hsl(var(--primary))" 
-                      name={`Base Scenario (${(baseGrowth * 100).toFixed(1)}%/year)`}
+                      name={`Scénario de Base (${(baseGrowth * 100).toFixed(1)}%/an)`}
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar 
                       dataKey="optimistic" 
                       fill="#10b981" 
-                      name={`Optimistic Scenario (${(optimisticGrowth * 100).toFixed(1)}%/year)`}
+                      name={`Scénario Optimiste (${(optimisticGrowth * 100).toFixed(1)}%/an)`}
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
@@ -163,16 +163,16 @@ const ChartsDisplay: React.FC<ChartsDisplayProps> = ({
           {/* Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Projection Summary</CardTitle>
+              <CardTitle>Résumé des Projections</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="text-muted-foreground">Initial Value:</p>
+                  <p className="text-muted-foreground">Valeur Initiale :</p>
                   <p className="text-2xl font-bold">{formatCurrency(initialPrice)}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-muted-foreground">Potential Gain (10 years, optimistic):</p>
+                  <p className="text-muted-foreground">Gain Potentiel (10 ans, optimiste) :</p>
                   <p className="text-2xl font-bold text-green-600">
                     {formatCurrency(valeurProjetee(initialPrice, optimisticGrowth, 10) - initialPrice)}
                   </p>
