@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calculator, BarChart3, Download } from 'lucide-react';
 import InvestmentCalculator from './components/InvestmentCalculator';
 import ChartsDisplay from './components/ChartsDisplay';
