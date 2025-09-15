@@ -13,11 +13,12 @@ export default defineConfig({
     host: true,
     port: Number(process.env.PORT) || 5000,
     allowedHosts: true,
-    hmr: {
+    // Conditional HMR: only use custom settings when REPLIT_DEV_DOMAIN is available
+    hmr: process.env.REPLIT_DEV_DOMAIN ? {
       host: process.env.REPLIT_DEV_DOMAIN,
       clientPort: 443,
       protocol: 'wss'
-    }
+    } : true
   },
   
   build: {
