@@ -3,17 +3,20 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [react()],
   
-  // Base path for dual environment support
-  base: mode === 'production' ? '/bruz-investment-calculator/' : '/',
+  // Simple base path for Replit-only deployment
+  base: '/',
   
   server: {
-    host: '0.0.0.0',
-    port: 5000,
+    host: true,
+    port: Number(process.env.PORT) || 5000,
+    allowedHosts: true,
     hmr: {
-      clientPort: 5000
+      host: process.env.REPLIT_DEV_DOMAIN,
+      clientPort: 443,
+      protocol: 'wss'
     }
   },
   
@@ -21,7 +24,6 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -37,10 +39,5 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  },
-  
-  // Define environment variables
-  define: {
-    __IS_GITHUB_PAGES__: JSON.stringify(mode === 'production')
   }
-}))
+})

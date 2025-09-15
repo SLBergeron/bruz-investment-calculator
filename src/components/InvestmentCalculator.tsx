@@ -8,11 +8,11 @@ import {
 } from '../lib/calculations';
 import { formatCurrency, formatPercentage } from '../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
+import { InputWithUnit } from './ui/input-with-unit';
 import { Button } from './ui/button';
-import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Separator } from './ui/separator';
 
 interface CalculationResults {
   montantPret: number;
@@ -53,10 +53,77 @@ const InvestmentCalculator: React.FC = () => {
 
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [scenario, setScenario] = useState<'base' | 'optimistic'>('base');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Validation function
+  const validateParameters = () => {
+    const errors: Record<string, string> = {};
+    
+    // Check for NaN/invalid numbers first
+    if (!Number.isFinite(parameters.price)) errors.price = "Invalid number";
+    else if (parameters.price <= 0) errors.price = "Price must be greater than 0";
+    
+    if (!Number.isFinite(parameters.area)) errors.area = "Invalid number";
+    else if (parameters.area <= 0) errors.area = "Area must be greater than 0";
+    
+    if (!Number.isFinite(parameters.downPayment)) errors.downPayment = "Invalid number";
+    else if (parameters.downPayment < 0) errors.downPayment = "Down payment cannot be negative";
+    
+    if (!Number.isFinite(parameters.feesPercent)) errors.feesPercent = "Invalid number";
+    else if (parameters.feesPercent < 0 || parameters.feesPercent > 1) errors.feesPercent = "Acquisition fees must be between 0% and 100%";
+    
+    // Calculate fees to validate against total cost (only if values are valid)
+    if (Number.isFinite(parameters.price) && Number.isFinite(parameters.feesPercent) && Number.isFinite(parameters.downPayment)) {
+      const fees = parameters.price * parameters.feesPercent;
+      const totalCost = parameters.price + fees;
+      if (parameters.downPayment >= totalCost) errors.downPayment = "Down payment cannot exceed property price plus fees";
+    }
+    
+    if (!Number.isFinite(parameters.netIncome)) errors.netIncome = "Invalid number";
+    else if (parameters.netIncome <= 0) errors.netIncome = "Net income must be greater than 0";
+    
+    if (!Number.isFinite(parameters.interestRate)) errors.interestRate = "Invalid number";
+    else if (parameters.interestRate < 0 || parameters.interestRate > 0.2) errors.interestRate = "Interest rate must be between 0% and 20%";
+    
+    if (!Number.isFinite(parameters.loanYears)) errors.loanYears = "Invalid number";
+    else if (parameters.loanYears <= 0 || parameters.loanYears > 50) errors.loanYears = "Loan duration must be between 1 and 50 years";
+    
+    if (!Number.isFinite(parameters.insuranceRate)) errors.insuranceRate = "Invalid number";
+    else if (parameters.insuranceRate < 0 || parameters.insuranceRate > 0.1) errors.insuranceRate = "Insurance rate must be between 0% and 10%";
+    
+    if (!Number.isFinite(parameters.rentPerSqm)) errors.rentPerSqm = "Invalid number";
+    else if (parameters.rentPerSqm <= 0) errors.rentPerSqm = "Rent per m² must be greater than 0";
+    
+    if (!Number.isFinite(parameters.chargesPercent)) errors.chargesPercent = "Invalid number";
+    else if (parameters.chargesPercent < 0 || parameters.chargesPercent > 1) errors.chargesPercent = "Charges must be between 0% and 100%";
+    
+    if (!Number.isFinite(parameters.vacancyPercent)) errors.vacancyPercent = "Invalid number";
+    else if (parameters.vacancyPercent < 0 || parameters.vacancyPercent > 1) errors.vacancyPercent = "Vacancy rate must be between 0% and 100%";
+    
+    if (!Number.isFinite(parameters.baseGrowth)) errors.baseGrowth = "Invalid number";
+    else if (parameters.baseGrowth < -0.05 || parameters.baseGrowth > 0.2) errors.baseGrowth = "Base growth must be between -5% and 20%";
+    
+    if (!Number.isFinite(parameters.optimisticGrowth)) errors.optimisticGrowth = "Invalid number";
+    else if (parameters.optimisticGrowth < -0.05 || parameters.optimisticGrowth > 0.2) errors.optimisticGrowth = "Optimistic growth must be between -5% and 20%";
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const calculate = () => {
+    if (!validateParameters()) {
+      setResults(null);
+      return;
+    }
+
     const fees = parameters.price * parameters.feesPercent;
-    const loanAmount = parameters.price - (parameters.downPayment - fees);
+    const loanAmount = parameters.price + fees - parameters.downPayment;
+    
+    // Guard against invalid loan amount or NaN values
+    if (loanAmount <= 0 || !Number.isFinite(loanAmount)) {
+      setResults(null);
+      return;
+    }
     
     const monthlyPI = mensualite(loanAmount, parameters.interestRate, parameters.loanYears);
     const monthlyInsurance = loanAmount * parameters.insuranceRate / 12;
@@ -116,6 +183,8 @@ const InvestmentCalculator: React.FC = () => {
       ...prev,
       [field]: value
     }));
+    // Trigger validation on input change for real-time feedback
+    setTimeout(() => validateParameters(), 0);
   };
 
   return (
@@ -185,44 +254,44 @@ const InvestmentCalculator: React.FC = () => {
                     Property Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Property Price (€)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={parameters.price}
-                      onChange={(e) => handleInputChange('price', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="area">Area (m²)</Label>
-                    <Input
-                      id="area"
-                      type="number"
-                      value={parameters.area}
-                      onChange={(e) => handleInputChange('area', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="downPayment">Down Payment (€)</Label>
-                    <Input
-                      id="downPayment"
-                      type="number"
-                      value={parameters.downPayment}
-                      onChange={(e) => handleInputChange('downPayment', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="feesPercent">Acquisition Fees (%)</Label>
-                    <Input
-                      id="feesPercent"
-                      type="number"
-                      step="0.01"
-                      value={parameters.feesPercent * 100}
-                      onChange={(e) => handleInputChange('feesPercent', Number(e.target.value) / 100)}
-                    />
-                  </div>
+                <CardContent className="space-y-6">
+                  <InputWithUnit
+                    label="Property Price"
+                    unit="€"
+                    type="number"
+                    value={parameters.price}
+                    onChange={(e) => handleInputChange('price', Number(e.target.value))}
+                    helperText="Total purchase price for the 57m² apartment"
+                    error={validationErrors.price}
+                  />
+                  <InputWithUnit
+                    label="Area"
+                    unit="m²"
+                    type="number"
+                    value={parameters.area}
+                    onChange={(e) => handleInputChange('area', Number(e.target.value))}
+                    helperText="Living area of the property"
+                    error={validationErrors.area}
+                  />
+                  <InputWithUnit
+                    label="Down Payment"
+                    unit="€"
+                    type="number"
+                    value={parameters.downPayment}
+                    onChange={(e) => handleInputChange('downPayment', Number(e.target.value))}
+                    helperText="Initial cash payment (applied to total cost including fees)"
+                    error={validationErrors.downPayment}
+                  />
+                  <InputWithUnit
+                    label="Acquisition Fees"
+                    unit="%"
+                    type="number"
+                    step="0.01"
+                    value={parameters.feesPercent * 100}
+                    onChange={(e) => handleInputChange('feesPercent', Number(e.target.value) / 100)}
+                    helperText="Notary, registration, and agency fees"
+                    error={validationErrors.feesPercent}
+                  />
                 </CardContent>
               </Card>
 
@@ -234,45 +303,45 @@ const InvestmentCalculator: React.FC = () => {
                     Financing
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="netIncome">Monthly Net Income (€)</Label>
-                    <Input
-                      id="netIncome"
-                      type="number"
-                      value={parameters.netIncome}
-                      onChange={(e) => handleInputChange('netIncome', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="interestRate">Interest Rate (%)</Label>
-                    <Input
-                      id="interestRate"
-                      type="number"
-                      step="0.01"
-                      value={parameters.interestRate * 100}
-                      onChange={(e) => handleInputChange('interestRate', Number(e.target.value) / 100)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="loanYears">Loan Duration (years)</Label>
-                    <Input
-                      id="loanYears"
-                      type="number"
-                      value={parameters.loanYears}
-                      onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="insuranceRate">Insurance Rate (%)</Label>
-                    <Input
-                      id="insuranceRate"
-                      type="number"
-                      step="0.01"
-                      value={parameters.insuranceRate * 100}
-                      onChange={(e) => handleInputChange('insuranceRate', Number(e.target.value) / 100)}
-                    />
-                  </div>
+                <CardContent className="space-y-6">
+                  <InputWithUnit
+                    label="Monthly Net Income"
+                    unit="€"
+                    type="number"
+                    value={parameters.netIncome}
+                    onChange={(e) => handleInputChange('netIncome', Number(e.target.value))}
+                    helperText="Your monthly take-home salary"
+                    error={validationErrors.netIncome}
+                  />
+                  <InputWithUnit
+                    label="Interest Rate"
+                    unit="%"
+                    type="number"
+                    step="0.01"
+                    value={parameters.interestRate * 100}
+                    onChange={(e) => handleInputChange('interestRate', Number(e.target.value) / 100)}
+                    helperText="Annual mortgage interest rate"
+                    error={validationErrors.interestRate}
+                  />
+                  <InputWithUnit
+                    label="Loan Duration"
+                    unit="years"
+                    type="number"
+                    value={parameters.loanYears}
+                    onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
+                    helperText="Mortgage repayment period"
+                    error={validationErrors.loanYears}
+                  />
+                  <InputWithUnit
+                    label="Insurance Rate"
+                    unit="%"
+                    type="number"
+                    step="0.01"
+                    value={parameters.insuranceRate * 100}
+                    onChange={(e) => handleInputChange('insuranceRate', Number(e.target.value) / 100)}
+                    helperText="Annual loan insurance premium"
+                    error={validationErrors.insuranceRate}
+                  />
                 </CardContent>
               </Card>
 
@@ -284,41 +353,48 @@ const InvestmentCalculator: React.FC = () => {
                     Rental Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="rentPerSqm">Rent per m² (€/m²/month)</Label>
-                    <Input
-                      id="rentPerSqm"
-                      type="number"
-                      value={parameters.rentPerSqm}
-                      onChange={(e) => handleInputChange('rentPerSqm', Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="chargesPercent">Charges (%)</Label>
-                    <Input
-                      id="chargesPercent"
-                      type="number"
-                      step="0.01"
-                      value={parameters.chargesPercent * 100}
-                      onChange={(e) => handleInputChange('chargesPercent', Number(e.target.value) / 100)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="vacancyPercent">Vacancy Rate (%)</Label>
-                    <Input
-                      id="vacancyPercent"
-                      type="number"
-                      step="0.01"
-                      value={parameters.vacancyPercent * 100}
-                      onChange={(e) => handleInputChange('vacancyPercent', Number(e.target.value) / 100)}
-                    />
-                  </div>
-                  <div className="pt-2">
-                    <Button onClick={calculate} className="w-full" size="lg">
-                      Recalculate
-                    </Button>
-                  </div>
+                <CardContent className="space-y-6">
+                  <InputWithUnit
+                    label="Rent per m²"
+                    unit="€/m²/month"
+                    type="number"
+                    value={parameters.rentPerSqm}
+                    onChange={(e) => handleInputChange('rentPerSqm', Number(e.target.value))}
+                    helperText="Monthly rent per square meter"
+                    error={validationErrors.rentPerSqm}
+                  />
+                  <InputWithUnit
+                    label="Charges"
+                    unit="%"
+                    type="number"
+                    step="0.01"
+                    value={parameters.chargesPercent * 100}
+                    onChange={(e) => handleInputChange('chargesPercent', Number(e.target.value) / 100)}
+                    helperText="Property management and maintenance costs"
+                    error={validationErrors.chargesPercent}
+                  />
+                  <InputWithUnit
+                    label="Vacancy Rate"
+                    unit="%"
+                    type="number"
+                    step="0.01"
+                    value={parameters.vacancyPercent * 100}
+                    onChange={(e) => handleInputChange('vacancyPercent', Number(e.target.value) / 100)}
+                    helperText="Expected periods without tenants"
+                    error={validationErrors.vacancyPercent}
+                  />
+                  
+                  <Separator className="my-4" />
+                  
+                  <Button 
+                    onClick={calculate} 
+                    className="w-full" 
+                    size="lg"
+                    disabled={Object.keys(validationErrors).length > 0}
+                  >
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Recalculate Investment
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -452,27 +528,27 @@ const InvestmentCalculator: React.FC = () => {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="baseGrowth">Base Growth (%/year)</Label>
-                    <Input
-                      id="baseGrowth"
-                      type="number"
-                      step="0.01"
-                      value={parameters.baseGrowth * 100}
-                      onChange={(e) => handleInputChange('baseGrowth', Number(e.target.value) / 100)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="optimisticGrowth">Optimistic Growth (%/year)</Label>
-                    <Input
-                      id="optimisticGrowth"
-                      type="number"
-                      step="0.01"
-                      value={parameters.optimisticGrowth * 100}
-                      onChange={(e) => handleInputChange('optimisticGrowth', Number(e.target.value) / 100)}
-                    />
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <InputWithUnit
+                    label="Base Growth"
+                    unit="%/year"
+                    type="number"
+                    step="0.01"
+                    value={parameters.baseGrowth * 100}
+                    onChange={(e) => handleInputChange('baseGrowth', Number(e.target.value) / 100)}
+                    helperText="Conservative property value growth"
+                    error={validationErrors.baseGrowth}
+                  />
+                  <InputWithUnit
+                    label="Optimistic Growth"
+                    unit="%/year"
+                    type="number"
+                    step="0.01"
+                    value={parameters.optimisticGrowth * 100}
+                    onChange={(e) => handleInputChange('optimisticGrowth', Number(e.target.value) / 100)}
+                    helperText="Optimistic property value growth"
+                    error={validationErrors.optimisticGrowth}
+                  />
                 </div>
               </CardContent>
             </Card>
